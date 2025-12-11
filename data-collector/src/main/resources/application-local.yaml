@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/ai_scientist
+    url: jdbc:postgresql://localhost:5433/data_collector_db
     username: ai_user
     password: devpassword_change_in_production
     driver-class-name: org.postgresql.Driver
