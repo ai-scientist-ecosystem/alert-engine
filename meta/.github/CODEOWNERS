@@ -1,0 +1,7 @@
+# CODEOWNERS mapping modules to teams (GitHub org teams need creation)
+/core/ @core-team
+/workflow/ @workflow-team
+/knowledge/ @data-knowledge
+/frontend/ @frontend-ui
+/infra/ @devops-security
+/docs/ @docs-editors

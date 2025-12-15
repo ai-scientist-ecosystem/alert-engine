@@ -1,0 +1,45 @@
+name: Python Modules CI
+on:
+  push:
+    paths:
+      - 'core/**'
+      - 'workflow/**'
+      - 'knowledge/**'
+  pull_request:
+    paths:
+      - 'core/**'
+      - 'workflow/**'
+      - 'knowledge/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [core, workflow, knowledge]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Install dependencies
+        working-directory: ${{ matrix.module }}
+        run: |
+          poetry install
+      - name: Lint
+        working-directory: ${{ matrix.module }}
+        run: |
+          poetry run ruff check src/
+      - name: Type check
+        working-directory: ${{ matrix.module }}
+        run: |
+          poetry run mypy src/
+      - name: Run tests
+        working-directory: ${{ matrix.module }}
+        run: |
+          poetry run pytest -q

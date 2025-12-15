@@ -1,0 +1,58 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  security:
+    user:
+      name: ${CONFIG_USER:admin}
+      password: ${CONFIG_PASSWORD:admin}
+  cloud:
+    config:
+      server:
+        git:
+          # Git repository containing configuration files
+          uri: ${CONFIG_GIT_URI:https://github.com/ai-scientist-ecosystem/config-repo}
+          default-label: ${CONFIG_GIT_BRANCH:main}
+          clone-on-start: true
+          # Search paths within the repository
+          search-paths:
+            - '{application}'
+            - 'shared'
+          # Force pull to get latest changes
+          force-pull: true
+        # Enable native file system for local development
+        native:
+          search-locations: ${CONFIG_NATIVE_PATH:classpath:/configs}
+  profiles:
+    active: ${CONFIG_PROFILE:git}
+
+# Eureka client configuration
+eureka:
+  client:
+    enabled: ${EUREKA_ENABLED:true}
+    service-url:
+      defaultZone: ${EUREKA_URI:http://admin:admin@localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.uuid}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,refresh
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    org.springframework.cloud.config: INFO
+
+# Encryption key for sensitive properties
+# IMPORTANT: Set ENCRYPT_KEY environment variable in production
+# Generate a strong key with: openssl rand -base64 32
+encrypt:
+  key: ${ENCRYPT_KEY:}
